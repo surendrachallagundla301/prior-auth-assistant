@@ -1,0 +1,17 @@
+:root { font-family: system-ui, sans-serif; color: #1f2933; background: #f5f7fa; }
+main { max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+h1 { margin-bottom: 0.25rem; }
+.lede { color: #52606d; margin-top: 0; }
+form { display: grid; gap: 0.9rem; background: #fff; padding: 1.25rem; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+label { display: grid; gap: 0.3rem; font-weight: 600; font-size: 0.9rem; }
+input, select { padding: 0.5rem; border: 1px solid #cbd2d9; border-radius: 4px; font: inherit; font-weight: 400; }
+fieldset { border: 1px solid #e4e7eb; border-radius: 4px; display: grid; gap: 0.4rem; }
+label.check { display: flex; align-items: center; gap: 0.5rem; font-weight: 400; }
+button { padding: 0.6rem 1rem; background: #1f3864; color: #fff; border: 0; border-radius: 4px; font: inherit; cursor: pointer; }
+button:disabled { opacity: 0.6; }
+.error { color: #b42318; font-weight: 400; font-size: 0.85rem; }
+.banner { background: #fef3f2; padding: 0.75rem; border-radius: 4px; }
+.result { margin-top: 1.25rem; padding: 1rem 1.25rem; border-radius: 8px; background: #fff; border-left: 6px solid; }
+.risk-low { border-color: #12b76a; }
+.risk-medium { border-color: #f79009; }
+.risk-high { border-color: #d92d20; }

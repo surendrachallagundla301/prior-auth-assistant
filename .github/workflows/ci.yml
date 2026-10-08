@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    name: Backend (Java 17, Spring Boot)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+      - name: Build and test
+        run: mvn -B verify
+
+  frontend:
+    name: Frontend (React, TypeScript)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  infrastructure:
+    name: Infrastructure & policy as code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.9.8"
+      - name: Terraform format and validate
+        working-directory: infra
+        run: |
+          terraform fmt -check -recursive
+          terraform init -backend=false
+          terraform validate
+      - name: Install conftest
+        run: |
+          curl -sSL https://github.com/open-policy-agent/conftest/releases/download/v0.56.0/conftest_0.56.0_Linux_x86_64.tar.gz | tar xz conftest
+          sudo mv conftest /usr/local/bin/
+      - name: OPA guardrails pass on real infrastructure
+        run: conftest test --parser hcl2 --policy policy infra/
+      - name: OPA guardrails catch the insecure fixture
+        run: |
+          if conftest test --parser hcl2 --policy policy policy/testdata/insecure.tf; then
+            echo "Policies failed to catch insecure infrastructure" && exit 1
+          fi
+      - name: Checkov scan
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: infra
+          framework: terraform
+          soft_fail: true
+
+  dependency-scan:
+    name: Snyk dependency scan
+    runs-on: ubuntu-latest
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Skip when no Snyk token is configured
+        if: env.SNYK_TOKEN == ''
+        run: echo "Add a SNYK_TOKEN repository secret to enable this scan."
+      - uses: snyk/actions/setup@master
+        if: env.SNYK_TOKEN != ''
+      - name: Scan frontend dependencies
+        if: env.SNYK_TOKEN != ''
+        working-directory: frontend
+        run: npm ci && snyk test --severity-threshold=high

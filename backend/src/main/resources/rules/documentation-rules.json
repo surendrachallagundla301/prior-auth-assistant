@@ -1,0 +1,33 @@
+{
+  "procedures": {
+    "70553": {
+      "description": "MRI brain without and with contrast",
+      "required": ["PHYSICIAN_ORDER", "CLINICAL_NOTES", "PRIOR_TREATMENT_HISTORY"]
+    },
+    "72148": {
+      "description": "MRI lumbar spine without contrast",
+      "required": ["PHYSICIAN_ORDER", "CLINICAL_NOTES", "PRIOR_TREATMENT_HISTORY"]
+    },
+    "27447": {
+      "description": "Total knee arthroplasty",
+      "required": ["PHYSICIAN_ORDER", "CLINICAL_NOTES", "IMAGING_REPORT", "PRIOR_TREATMENT_HISTORY"]
+    },
+    "95810": {
+      "description": "Polysomnography (sleep study), attended",
+      "required": ["PHYSICIAN_ORDER", "CLINICAL_NOTES"]
+    },
+    "J0897": {
+      "description": "Denosumab injection",
+      "required": ["PHYSICIAN_ORDER", "CLINICAL_NOTES", "LAB_RESULTS"]
+    }
+  },
+  "payerOverrides": {
+    "ACME_HEALTH": {
+      "27447": ["MEDICAL_NECESSITY_LETTER"],
+      "J0897": ["PRIOR_TREATMENT_HISTORY"]
+    },
+    "SUMMIT_CARE": {
+      "70553": ["IMAGING_REPORT"]
+    }
+  }
+}
