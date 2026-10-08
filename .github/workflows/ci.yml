@@ -16,14 +16,21 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
           cache: maven
       - name: Build and test
         run: mvn -B verify
+      - name: Confirm every test suite ran
+        run: |
+          total=$(grep -ho 'tests="[0-9]*"' target/surefire-reports/TEST-*.xml | grep -o '[0-9]*' | paste -sd+ | bc)
+          failed=$(grep -ho 'failures="[0-9]*"\|errors="[0-9]*"' target/surefire-reports/TEST-*.xml | grep -o '[0-9]*' | paste -sd+ | bc)
+          echo "Tests run: $total, failures/errors: $failed"
+          echo "### Backend tests: $total run, $failed failed" >> "$GITHUB_STEP_SUMMARY"
+          test "$total" -ge 19 && test "$failed" -eq 0
 
   frontend:
     name: Frontend (React, TypeScript)
@@ -32,8 +39,8 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: "20"
           cache: npm
@@ -46,7 +53,7 @@ jobs:
     name: Infrastructure & policy as code
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.9.8"
@@ -80,7 +87,7 @@ jobs:
     env:
       SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Skip when no Snyk token is configured
         if: env.SNYK_TOKEN == ''
         run: echo "Add a SNYK_TOKEN repository secret to enable this scan."

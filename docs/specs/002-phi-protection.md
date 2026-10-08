@@ -19,10 +19,10 @@ encryption at rest, minimum necessary disclosure, access control and audit.
    keeps encrypted logs for 365 days. Enforced by OPA policies in CI.
 
 ## Acceptance criteria
-- [x] Raw database values for PHI columns do not contain the plaintext (`PriorAuthControllerIT#phiIsEncryptedAtRest`).
+- [x] Raw database values for PHI columns do not contain the plaintext (`PriorAuthControllerTest#phiIsEncryptedAtRest`).
 - [x] Tampered ciphertext fails to decrypt (`PhiEncryptorTest`).
 - [x] API responses contain masked values only.
-- [x] Wrong role gets 403, no credentials gets 401 (`PriorAuthControllerIT#rolesAreEnforced`).
+- [x] Wrong role gets 403, no credentials gets 401 (`PriorAuthControllerTest#rolesAreEnforced`).
 - [x] Validation errors do not echo submitted values.
-- [x] Every action appears in `/api/audit` (`PriorAuthControllerIT#everyActionIsAudited`).
+- [x] Every action appears in `/api/audit` (`PriorAuthControllerTest#everyActionIsAudited`).
 - [x] OPA policies pass on `infra/` and fail on `policy/testdata/insecure.tf` (CI).

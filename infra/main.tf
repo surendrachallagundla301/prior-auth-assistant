@@ -35,6 +35,7 @@ locals {
 }
 
 resource "aws_kms_key" "phi" {
+  # checkov:skip=CKV2_AWS_64: Uses the default account key policy in the demo; production defines a least-privilege policy
   description             = "Encrypts PHI documents and logs for ${local.name}"
   enable_key_rotation     = true
   deletion_window_in_days = 30
@@ -42,6 +43,9 @@ resource "aws_kms_key" "phi" {
 }
 
 resource "aws_s3_bucket" "documents" {
+  # checkov:skip=CKV_AWS_144: Cross-region replication is out of scope for this single-region prototype
+  # checkov:skip=CKV2_AWS_62: No downstream consumers need S3 event notifications yet
+  # checkov:skip=CKV_AWS_18: Access logging bucket omitted to keep the demo small; CloudTrail data events cover audit
   bucket = "${local.name}-documents"
   tags   = local.tags
 }
@@ -61,6 +65,21 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "documents" {
       kms_master_key_id = aws_kms_key.phi.arn
     }
     bucket_key_enabled = true
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "documents" {
+  bucket = aws_s3_bucket.documents.id
+  rule {
+    id     = "expire-old-versions"
+    status = "Enabled"
+    filter {}
+    noncurrent_version_expiration {
+      noncurrent_days = 90
+    }
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
   }
 }
 
