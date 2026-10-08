@@ -30,4 +30,4 @@ documentation rules before I submit it, so that I can attach anything missing an
 - [x] Codes are accepted in lowercase and normalised.
 - [x] Running a check updates the request status and writes an audit event.
 
-Tests: `DocumentationRulesEngineTest`, `PriorAuthControllerIT#checkFlagsPayerSpecificMissingDocument`.
+Tests: `DocumentationRulesEngineTest`, `PriorAuthControllerTest#checkFlagsPayerSpecificMissingDocument`.
