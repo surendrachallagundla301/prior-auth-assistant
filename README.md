@@ -106,5 +106,8 @@ Java 17 · Spring Boot 3 · Spring Security · JPA/Hibernate · PostgreSQL/H2 ·
 Vite · Jest · JUnit 5 · Terraform · AWS (S3, KMS, CloudWatch) · OPA/Rego · conftest · Checkov ·
 CodeQL · Snyk · GitHub Actions
 
+## Author
+**Surendra Challagundla** · [GitHub](https://github.com/surendrachallagundla301) · [LinkedIn](https://linkedin.com/in/surendra-challagundla-774182248)
+
 ## License
 MIT
